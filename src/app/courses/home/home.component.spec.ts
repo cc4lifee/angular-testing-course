@@ -8,7 +8,7 @@ import { CoursesService } from "../services/courses.service";
 describe('HomeComponent', () => {
 
     let fixture: ComponentFixture<HomeComponent>;
-    let component: HomeCompone nt;
+    let component: HomeComponent;
     let elem: DebugElement;
     let coursesService: CoursesService;
 
