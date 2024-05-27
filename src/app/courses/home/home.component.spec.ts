@@ -4,13 +4,20 @@ import { DebugElement } from "@angular/core";
 import { CoursesModule } from "../courses.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { CoursesService } from "../services/courses.service";
+import { setupCourses } from "../common/setup-test-data";
+import { By } from "@angular/platform-browser";
+import { of } from "rxjs";
+import { click } from '../common/test-utils';
 
 describe('HomeComponent', () => {
 
     let fixture: ComponentFixture<HomeComponent>;
     let component: HomeComponent;
     let elem: DebugElement;
-    let coursesService: CoursesService;
+    let coursesService: any;
+
+    const begginerCourses = setupCourses().filter(course => course.category == 'BEGINNER');
+    const advancedCourses = setupCourses().filter(course => course.category == 'ADVANCED');
 
     beforeEach(waitForAsync(() => {
 
@@ -32,15 +39,68 @@ describe('HomeComponent', () => {
 
 
     it('should create the component', () => {
-
         expect(component).toBeTruthy();
-
-
     });
 
     it('Should display only beginner courses', () => {
 
-        pending()
+        coursesService.findAllCourses.and.returnValue(of(begginerCourses));
+
+        fixture.detectChanges();
+
+        const tabs = elem.queryAll(By.css(".mat-mdc-tab"));
+
+        expect(tabs.length).toBe(1, "Unexpected number of tabs found")
+
+    });
+
+    it('Should display only advance courses', () => {
+
+        coursesService.findAllCourses.and.returnValue(of(advancedCourses));
+
+        fixture.detectChanges();
+
+        const tabs = elem.queryAll(By.css(".mat-mdc-tab"));
+
+        expect(tabs.length).toBe(1, "Unexpected number of tabs found")
+
+    });
+
+    it('Should display only advance courses', () => {
+
+        coursesService.findAllCourses.and.returnValue(of(setupCourses()));
+
+        fixture.detectChanges();
+
+        const tabs = elem.queryAll(By.css(".mat-mdc-tab"));
+
+        expect(tabs.length).toBe(2, "Unexpected number of tabs found")
+
+    });
+
+    xit('Should display advance courses when tab clicked', (done: DoneFn) => {
+
+        coursesService.findAllCourses.and.returnValue(of(setupCourses()));
+
+        fixture.detectChanges();
+
+        const tabs = elem.queryAll(By.css(".mat-mdc-tab"));
+
+        click(tabs[1])
+
+        fixture.detectChanges();
+
+        setTimeout(() => {
+
+            const cardTitles = elem.queryAll(By.css(".mat-mdc-card-title"));
+
+            expect(cardTitles.length).toBeGreaterThan(0, "Could not find card titles");
+            expect(cardTitles[0].nativeElement.textContent).toContain("Angular Security Course");
+
+            done();
+        }, 500)
+
+
 
     });
 });
