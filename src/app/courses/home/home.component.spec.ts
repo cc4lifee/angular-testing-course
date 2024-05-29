@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import { async, ComponentFixture, fakeAsync, flush, TestBed, waitForAsync } from "@angular/core/testing";
 import { HomeComponent } from "./home.component";
 import { DebugElement } from "@angular/core";
 import { CoursesModule } from "../courses.module";
@@ -35,8 +35,6 @@ describe('HomeComponent', () => {
             })
 
     }));
-
-
 
     it('should create the component', () => {
         expect(component).toBeTruthy();
@@ -78,7 +76,7 @@ describe('HomeComponent', () => {
 
     });
 
-    xit('Should display advance courses when tab clicked', (done: DoneFn) => {
+    it('Should display advance courses when tab clicked - fakeAsync', fakeAsync(() => {
 
         coursesService.findAllCourses.and.returnValue(of(setupCourses()));
 
@@ -90,17 +88,38 @@ describe('HomeComponent', () => {
 
         fixture.detectChanges();
 
-        setTimeout(() => {
+        flush();
 
-            const cardTitles = elem.queryAll(By.css(".mat-mdc-card-title"));
+        const cardTitles = elem.queryAll(By.css(".mat-mdc-tab-body-active .mat-mdc-card-title"));
+
+        expect(cardTitles.length).toBeGreaterThan(0, "Could not find card titles");
+
+        expect(cardTitles[0].nativeElement.textContent).toContain("Angular Security Course");
+
+    }));
+
+    it('Should display advance courses when tab clicked - waitForAsync', waitForAsync(() => {
+
+        coursesService.findAllCourses.and.returnValue(of(setupCourses()));
+
+        fixture.detectChanges();
+
+        const tabs = elem.queryAll(By.css(".mat-mdc-tab"));
+
+        click(tabs[1])
+
+        fixture.detectChanges();
+
+        fixture.whenStable().then(() => {
+            console.log('Called whenStable();');
+
+            const cardTitles = elem.queryAll(By.css(".mat-mdc-tab-body-active .mat-mdc-card-title"));
 
             expect(cardTitles.length).toBeGreaterThan(0, "Could not find card titles");
+
             expect(cardTitles[0].nativeElement.textContent).toContain("Angular Security Course");
-
-            done();
-        }, 500)
+        })
 
 
-
-    });
+    }));
 });
