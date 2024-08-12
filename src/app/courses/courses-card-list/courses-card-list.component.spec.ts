@@ -48,6 +48,8 @@ describe('CoursesCardListComponent', () => {
 
         const cards = elem.queryAll(By.css('.course-card'));
 
+        // console.log(cards);
+
         expect(cards).toBeTruthy('Could not find cards');
 
         expect(cards.length).toBe(12, 'Unexpected number of courses');
@@ -63,6 +65,8 @@ describe('CoursesCardListComponent', () => {
         fixture.detectChanges();
 
         const course = component.courses[0];
+
+        console.log(course);
 
         const card = elem.query(By.css('.course-card:first-child')),
             title = card.query(By.css('mat-card-title')),
