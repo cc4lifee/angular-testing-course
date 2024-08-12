@@ -123,7 +123,7 @@ Suppose you have a `DataService` that uses `HttpClient` to make HTTP GET and POS
 #### DataService
 
 ```typescript
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 
@@ -131,9 +131,11 @@ import { Observable } from "rxjs";
   providedIn: "root",
 })
 export class DataService {
-  private apiUrl = "https://urldefense.com/v3/__https://api.example.com/data__;!!LnUEiqHeOzE!L0t0HUGyXscInESgbpTqwRQDKysOO3eukJu--01UWCh5rZC4srVNIl_juHyZ9Ijm2b3de6-NXhvyY1MuJM0xtC8uL30t_8Vnfh-C$";
+  private apiUrl = "https://api.example.com/data";
 
-  constructor(private http: HttpClient) {}
+   private readonly http = inject(HttpClient);
+
+   constructor() {}
 
   getData(): Observable<any> {
     return this.http.get(this.apiUrl);
